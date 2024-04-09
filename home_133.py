@@ -175,10 +175,20 @@ with st.sidebar:
         text_embedding_option = st.selectbox('Choose Embedding Model',('titan', 'tian-image', 'openai', 'hf-tei'))
     if 'Multimodal' in perplexity_on:
         upload_image = st.file_uploader("Upload your image here", accept_multiple_files=False, type=['jpg', 'png'])
+        image_url_p = st.text_input("Or Input Image URL", key="image_url", type="default")
         if upload_image:
             bytes_data = upload_image.read()
             image =  (io.BytesIO(bytes_data))
             st.image(image)
+        elif image_url_p:
+            try:
+                stream = fetch_image_from_url(image_url)
+                st.image(stream)
+                image = Image.open(stream)
+            except:
+                msg = 'Failed to download image, please check permission.'
+                st.session_state.messages.append({"role": "assistant", "content": msg})
+                st.chat_message("ai").write(msg)
 
     #----- RAG ----#
     st.divider()
@@ -395,7 +405,7 @@ if "Single" in image_on or "Multiple" in image_on:
         st.session_state.messages.append({"role": "assistant", "content": msg})
         
         st.image(image)
-        if "Multiple" in image_on:
+        if "Multiple" in image_on and upload_image2:
             st.image(image2)
         st.chat_message("assistant", avatar='🌈').write(msg)
 elif video_on:
@@ -498,18 +508,13 @@ elif 'naive' not in perplexity_on.lower():
         if "anthropic.claude" in option.lower() and 'text' in perplexity_on.lower():
             msg,_ = bedrock_textGen_perplexity_memory(option, prompt, max_token, temperature, top_p, top_k, stop_sequences, embd_model_id)
         elif 'multimodal' in perplexity_on.lower():
-            if image :
+            if image:
                 if 'anthropic.claude' in option:
                     prompt_msg = bedrock_get_img_description(option, prompt, image, max_token, temperature, top_p, top_k, stop_sequences)
-                elif "gemini-pro-vision" in otpion:
+                elif "gemini-pro-vision" in option:
                     if isinstance(image, io.BytesIO):
                         image = Image.open(image)
                     context = [prompt,image]
-                    #context = [prompt, image] if upload_images or image_url else ([prompt, video] if video_url else None)
-                    if "Multiple" in image_on:
-                        if isinstance(image2, io.BytesIO):
-                            image2 = Image.open(image2)
-                        context = [prompt,image, image2]
                     response=st.session_state.chat.send_message(context,stream=True,generation_config = gen_config)
                     response.resolve()
                     prompt_msg=response.text
@@ -519,6 +524,7 @@ elif 'naive' not in perplexity_on.lower():
                 keywords = extract_keywords(prompt_msg)
                 search_prompt = '+'.join(str(item) for item in keywords)
                 prompt = f"{prompt}::{search_prompt}"
+                #prompt = f"{prompt}::{prompt_msg}"
             msg,_ = bedrock_imageGen_perplexity(option, prompt, max_token, temperature, top_p, top_k, stop_sequences, embd_model_id)
             #images= 
         elif "mistral.mistral-large" in option.lower() and 'text' in perplexity_on.lower():

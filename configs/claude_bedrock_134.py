@@ -38,9 +38,12 @@ from langchain.prompts import (
     FewShotChatMessagePromptTemplate,
 )
 
-module_path = ".."
-sys.path.append(os.path.abspath(module_path))
+module_paths = ["./", "../", "./configs"]
+for module_path in module_paths:
+    sys.path.append(os.path.abspath(module_path))
+    
 from utils import bedrock
+from mmrag_tools_133 import  resize_base64_image,  resize_bytes_image
 
 boto3_bedrock = bedrock.get_bedrock_client(
     assumed_role=os.environ.get("BEDROCK_ASSUME_ROLE", None),
@@ -359,9 +362,18 @@ def get_image_type(bytesio):
 def bedrock_get_img_description(option, prompt, image, max_token, temperature, top_p, top_k, stop_sequences):
     stop_sequence = [stop_sequences]
     #encoded_string = base64.b64encode(image)
+   
+    # format conversation
     if isinstance(image, io.BytesIO):
         image = Image.open(image)
     #base64_string = encoded_string.decode('utf-8')
+
+    # Resize to image resolution by half to make sure input to Claude 3 is < 5M
+    width, height = image.size
+    if width > 2048 or height > 2024:
+        new_size = (int(width/2), int(height/2))
+        image = image.resize(new_size, Image.Resampling.LANCZOS) # or Image.ANTIALIAS for Pillow < 7.0.0
+
     payload = {
         "modelId": option,
         "contentType": "application/json",

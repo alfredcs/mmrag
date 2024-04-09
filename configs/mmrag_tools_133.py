@@ -38,8 +38,9 @@ from urllib.parse import unquote # Required to unquote URLs
 #from claude_bedrock_13 import *
 os.environ['AWS_PROFILE'] = 'default'
 os.environ['AWS_DEFAULT_REGION'] = region = 'us-west-2'
-module_path = "./configs"
-sys.path.append(os.path.abspath(module_path))
+module_paths = ["./", "./configs"]
+for module_path in module_paths:
+    sys.path.append(os.path.abspath(module_path))
 from utils import bedrock
 from claude_bedrock_134 import *
 from multiprocessing.pool import ThreadPool
@@ -191,7 +192,7 @@ def insertImage2AOSS(image_path: str, image_url:str, bedrock_image_embeddings, h
         # Resize if needed
         width, height = image_byteio.size
         print(f"Image size:{width}x{height}, types: {type(image_data)} and {type(image_byteio)}")
-        if width > 2048 or height > 208:
+        if width > 2048 or height > 2048:
             image_data = resize_bytes_image(image_data, int(width/2), int(height/2))
             image_byteio = Image.open(io.BytesIO(image_data))
             
