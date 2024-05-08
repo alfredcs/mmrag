@@ -10,15 +10,15 @@ In this blog post, we present a new approach named Multi-modal RAG (mmRAG) to ta
 ## Release
 - [3/21/24] Initial draft
 
-**Usage and License Notices**: This project utilizes certain datasets and checkpoints that are subject to their respective original licenses. Users must comply with all terms and conditions of these original licenses, including but not limited to the [Amazon Terms of Use](https://aws.amazon.com/s) for the specific licenses for base vidual language models for tools (e.g. [Langchain community license](https://github.com/langchain-ai/langchain/blob/master/LICENSE) for Langchain. This project does not impose any additional constraints beyond those stipulated in the original licenses. Furthermore, users are reminded to ensure that their use of the dataset and checkpoints is in compliance with all applicable laws and regulations.  
+**Usage and License Notices**: This project utilizes certain datasets and checkpoints that are subject to their respective original licenses. Users must comply with all terms and conditions of these original licenses, including but not limited to the [Amazon Terms of Use](https://aws.amazon.com/s) for the specific licenses for base vidual language models for tools (e.g. [Langchain community license](https://github.com/langchain-ai/langchain/blob/master/LICENSE for Langchain, for [Beautiful Soup](https://pypi.org/project/beautifulsoup4/) and [PyMuPDF](https://pypi.org/project/PyMuPDF/). 
+
+Users are advised to verify that their utilization of the dataset and checkpoints adheres to all relevant laws and regulations. This project does not impose any additional constraints beyond those stipulated in the original licenses.
 
 ## Content
 - [Install](#install)
 - [Models](#models)
 - [Tools](#tools)
 - [Demo](#demo)
-- [Evaluation](#evaluation)
-- [Blog](#blog)
 
 ## Install
 
@@ -28,10 +28,31 @@ In this blog post, we present a new approach named Multi-modal RAG (mmRAG) to ta
    ```
 3. Request an AWS account to provision Bedrock model acess via [Amazon Bedrock console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/modelaccess)
 
+## Models
+
+The demo sameple uses the following models from Amazon Bedrock.
+
+  1. Text embedding: amazon.titan-embed-g1-text-02
+  2. Image embedding: amazon.titan-embed-image-v1
+  3. LLM/VLM: anthropic.claude-3-haiku-20240307-v1:0 and anthropic.claude-3-sonnet-20240229-v1:0 
+  4. ASR: Whisper from open source
+  5. Text Inference: Text Generation Inference (tgi v2.01) by Hugging Face 
+
 ## Tools
+
+The following tools and package are used for the demo codes
+
+  1. Web content parsing: Beatiful Soup
+  2. PDF parsing Python package: PyMuPDF
+  3. UI: Streamlit
+  4. Orchstration: Langchain 
 
 ## Demo
 
-## Evaluation
+Use the following bash CLI to kick off the demo sample.
 
-## Blog
+```
+streamlit run home.py --server.port <service_port>
+```
+
+![image](./images/mmrag-demo.png)
