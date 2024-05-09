@@ -26,7 +26,15 @@ Users are advised to verify that their utilization of the dataset and checkpoint
    ```
    pip install -t requirements.txt
    ```
-3. Request an AWS account to provision Bedrock model acess via [Amazon Bedrock console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/modelaccess)
+2. Request an AWS account to provision Bedrock model acess via [Amazon Bedrock console](https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/modelaccess)
+![image](./images/molde_access_console.png)
+3. Add aws credentials to your ~/.aws/credentials file
+   ```
+   [defualt]
+   aws_access_key_id=<aws_account_id>
+   aws_secret_access_key=<aws_account_key>
+   region=us-west-2 
+   ```
 
 ## Models
 
