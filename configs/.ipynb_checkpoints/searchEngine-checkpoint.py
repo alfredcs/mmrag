@@ -4,7 +4,8 @@ import numpy as np # Required to dedupe sites
 from urllib.parse import unquote # Required to unquote URLs
 from xml.etree import ElementTree
 
-# Saerch google and bing with a query and return urls
+# Saerch google and bing with a query and return url
+    
 class SearchEngine:
     def __init__(self):
         self.google_url = "https://www.google.com/search?q="

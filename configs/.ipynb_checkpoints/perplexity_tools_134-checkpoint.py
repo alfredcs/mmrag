@@ -43,12 +43,25 @@ from multiprocessing.pool import ThreadPool
 def scrape_and_parse(url: str) -> Document:
     """Scrape a webpage and parse it into a Document object"""
     req = requests.get(url)
-    article = simple_json_from_html_string(req.text, use_readability=False)
+    article = simple_json_from_html_string(req.text, use_readability=True)
     # The following line seems to work with the package versions on my local machine, but not on Google Colab
     # return Document(page_content=article['plain_text'][0]['text'], metadata={'source': url, 'page_title': article['title']})
     return Document(page_content='\n\n'.join([a['text'] for a in article['plain_text']]), metadata={'source': url, 'page_title': article['title']})
 
-
+def extract_keywords(input_string):
+    # Remove punctuation and convert to lowercase
+    input_string = input_string.translate(str.maketrans('', '', string.punctuation)).lower()
+    # Split the string into words
+    words = input_string.split()
+ 
+    # Define a regular expression pattern to match web searchable keywords
+    pattern = r'^[a-zA-Z0-9]+$'
+    # Filter out non-keyword words
+    keywords = [word for word in words if re.match(pattern, word)]
+    # Join the keywords with '+'
+    output_string = '+'.join(keywords)
+    return re.sub(r'[.-:/"\']', ' ', output_string)
+    
 # Saerch google and bing with a query and return urls
 class newsSearcher:
     def __init__(self):
@@ -57,8 +70,8 @@ class newsSearcher:
         #self.bing_url = "https://www.bing.com/search?q={query.replace(' ', '+')}"
 
     def search(self, query, count: int=10):
-        google_urls = self.search_goog(query, count)
-        bing_urls = self.search_bing(query, count)
+        google_urls = self.search_goog(extract_keywords(query), count)
+        bing_urls = self.search_bing(extract_keywords(query), count)
         combined_urls = google_urls + bing_urls
         urls = list(set(combined_urls))  # Remove duplicates
         return [scrape_and_parse(f) for f in urls], urls # Scrape and parse all the url
