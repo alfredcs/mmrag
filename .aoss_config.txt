@@ -1,0 +1,3 @@
+[DEFAULT]
+KB_id = <AWS Knowledgebase ID>
+DS_id = <AWS Datasource ID>
