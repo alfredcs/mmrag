@@ -32,7 +32,7 @@ from langchain_community.utilities import GoogleSearchAPIWrapper
 from readabilipy import simple_json_from_html_string # Required to parse HTML to pure text
 from langchain.agents import AgentExecutor, create_react_agent, initialize_agent, AgentType,load_tools
 from langchain_community.utilities.serpapi import SerpAPIWrapper
-from serpapi import GoogleSearch #, BingSearch
+from serpapi.google_search import GoogleSearch
 
 from langchain_community.vectorstores import FAISS
 from langchain_chroma import Chroma
